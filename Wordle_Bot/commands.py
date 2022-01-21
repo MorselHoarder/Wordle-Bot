@@ -5,18 +5,11 @@ from tabulate import tabulate
 from Wordle_Bot.logger import logger
 
 HEADERS = ["Name", "Average Score", "Completed"]
-DTYPE = [("name", str), ("score", float), ("completed", int)]
 
 
-class WordleCommands(cmds.Cog):
+class WordleGameCommands(cmds.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-
-    @cmds.Cog.listener("on_ready")
-    async def refresh_scores(self):
-        logger.info("Refreshing scores...")
-        await self.bot.refresh_scores()
-        logger.info("Scores refreshed. Bot ready.")
 
     @cmds.Cog.listener("on_message")
     async def check_new_message(self, message: discord.Message):
