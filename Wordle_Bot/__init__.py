@@ -5,7 +5,7 @@ from Wordle_Bot.commands import WordleCommands
 
 def create_bot(
     command_prefix="w!",
-    description="""This bot tracks statistics for the Wordle players in the server.""",
+    description="""Hi! I track statistics for the Wordle players in the server.""",
     intents=None,
     channel_names_list=["wordle", "general", "games"],
 ):

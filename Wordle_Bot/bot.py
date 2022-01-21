@@ -1,5 +1,5 @@
 import re
-import numpy as np
+import statistics as stats
 
 import discord
 from discord.ext.commands import Bot
@@ -62,7 +62,7 @@ class WordleBot(Bot):
         Returns the average wordle score of the member.
         """
         return (
-            round(np.mean(list(self.scores[member.id].values())), 2)
+            round(stats.mean(self.scores[member.id].values()), 2)
             if member.id in self.scores
             else "N/A"
         )
