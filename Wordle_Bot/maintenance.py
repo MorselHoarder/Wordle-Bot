@@ -21,7 +21,7 @@ class Maintenance(cmds.Cog):
         Refreshes the scores for the current server.
         """
         await ctx.send("Globally refreshing scores. This may take a few minutes...")
-        await self.refresh_scores(wipe_scores)
+        await self.bot.refresh_scores(wipe_scores)
         await ctx.send("Scores refreshed.")
 
     @cmds.command(name="rf", aliases=["refresh"])
@@ -30,7 +30,7 @@ class Maintenance(cmds.Cog):
         Refreshes the scores count for a channel.
         """
         await ctx.send(
-            f"Refreshing score count in #{channel.name}. This may take a minutes..."
+            f"Refreshing score count in #{channel.name}. This may take a minute..."
         )
         await self.bot.refresh_channel(channel)
         await ctx.send("Scores refreshed.")

@@ -33,7 +33,7 @@ class Errors(cmds.Cog):
             await ctx.send("Only the bot owner can use this command.")
             return
 
-        logger.error(error)
+        logger.error(error, exc_info=True)
         await ctx.send(
             "An error occurred. Please contact the bot owner if this persists."
         )
