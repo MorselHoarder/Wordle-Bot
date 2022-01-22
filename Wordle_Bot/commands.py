@@ -15,16 +15,16 @@ class WordleGameCommands(cmds.Cog):
     async def check_new_message(self, message: discord.Message):
         self.bot.check_for_wordle(message)
 
-    @cmds.command(name="score", aliases=["scores", "s"])
+    @cmds.command(name="s", aliases=["score", "scores"])
     async def show_scores(self, ctx, *members: discord.Member):
         """
         Displays the score of each member passed in.
         If no members are passed in, the score of the current user is displayed.
         [member] can be a mention, a name, or an ID.
         Usage examples:  w!score
-                         w!s @ServerMember12 FunnyNicknameGuy42 Bro#1234 ...
+                         w!s @ServerMember12 FunnyNicknameGuy42 Bro#1234
         """
-        if not self.bot._initialized:
+        if not self.bot.initialized:
             await ctx.send(
                 "Scores not finished tabulating from history. Please wait a minute and try again."
             )
@@ -53,13 +53,13 @@ class WordleGameCommands(cmds.Cog):
                 f"Cannot find member '{error.argument}'. Try spelling with the correct case, use their full username, or use a mention."
             )
 
-    @cmds.command(aliases=["lb", "leaderboards"])
+    @cmds.command(name="lb", aliases=["leaderboard"])
     async def leaderboard(self, ctx, scope=None):
         """
         Displays the leaderboard for the current server.
         If scope is set to "global", displays the global leaderboard.
         """
-        if not self.bot._initialized:
+        if not self.bot.initialized:
             await ctx.send(
                 "Scores not finished tabulating from history. Please wait a minute and try again."
             )

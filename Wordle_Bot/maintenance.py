@@ -28,18 +28,18 @@ class Maintenance(cmds.Cog):
         if isinstance(error, cmds.BadArgument):
             await ctx.send("Argument syntax error. Usage: w!refresh [wipe_scores]")
 
-    @cmds.command(aliases=["addch"])
+    @cmds.command(name="addch", aliases=["addchannel"])
     async def addchannel(self, ctx, channel: discord.TextChannel):
         """
         Adds a text channel to the list of channels to track wordle scores in.
         This must be done before the bot can track wordle scores in the channel.
         Best practice is to have a channel just for #wordle, but multiple channels is fine.
         """
-        if self.bot._is_channel_tracked(channel):
+        if self.bot.is_channel_tracked(channel):
             await ctx.send("Channel already added.")
             return
 
-        self.bot._track_channel(channel)
+        self.bot.track_channel(channel)
         await ctx.send(f"Added channel {ctx.channel.name}.")
 
     @addchannel.error
@@ -47,16 +47,16 @@ class Maintenance(cmds.Cog):
         if isinstance(error, cmds.BadArgument):
             await ctx.send("Channel not found in server.")
 
-    @cmds.command(aliases=["remch"])
+    @cmds.command(name="remch", aliases=["removech"])
     async def removechannel(self, ctx, channel: discord.TextChannel):
         """
         Removes a text channel from the list of channels to track wordle scores in.
         """
-        if not self.bot._is_channel_tracked(channel):
+        if not self.bot.is_channel_tracked(channel):
             await ctx.send("Channel not in list.")
             return
 
-        self.bot._untrack_channel(channel)
+        self.bot.untrack_channel(channel)
         await ctx.send(f"Removed channel {ctx.channel.name}.")
 
     @removechannel.error
@@ -64,22 +64,17 @@ class Maintenance(cmds.Cog):
         if isinstance(error, cmds.BadArgument):
             await ctx.send("Channel not found in server.")
 
-    @cmds.command(aliases=["chlist"])
+    @cmds.command(name="chl", aliases=["chlist"])
     async def channel_list(self, ctx):
         """
         Displays the list of channels to track wordle scores in.
         """
-        if not self.bot._channels_tracked(ctx):
+        if not self.bot.channels_tracked(ctx):
             await ctx.send("No channels are being tracked.")
             return
 
         await ctx.send(
             "```\n"
-            + "\n".join(
-                [
-                    f"{channel.name} ({channel.id})"
-                    for channel in self.bot._channels_tracked
-                ]
-            )
+            + "\n".join([f"#{channel.name}" for channel in self.bot.channels_tracked])
             + "```"
         )

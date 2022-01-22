@@ -27,7 +27,7 @@ class WordleBot(Bot):
         super().__init__(*args, **kwargs)
         self._load_channel_ids()
         self.scores = {}
-        self._initialized = False
+        self.initialized = False
 
     async def refresh_scores(self, wipe_scores=False):
         """
@@ -40,7 +40,7 @@ class WordleBot(Bot):
                 async for message in channel.history(limit=None):
                     self.check_for_wordle(message)
 
-        self._initialized = True
+        self.initialized = True
 
     def check_for_wordle(self, message: discord.Message):
         """
@@ -70,27 +70,33 @@ class WordleBot(Bot):
         """
         return len(self.scores[member.id]) if member.id in self.scores else 0
 
-    def _channels_tracked(self, ctx: discord.ext.commands.Context):
+    def channels_tracked(self, ctx: discord.ext.commands.Context):
         """
         Returns a list of tracked channel names in the current server.
         """
-        return [channel.name for channel in self.channel_ids_list[ctx.guild.id]]
-        # TODO fix this because it needs to get the channel object first
+        return (
+            [
+                discord.utils.get(ctx.guild.text_channels, id=channel_id)
+                for channel_id in self.channel_ids_list[ctx.guild.id]
+            ]
+            if self.channel_ids_list[ctx.guild.id]
+            else []
+        )
 
-    def _is_channel_tracked(self, channel: discord.TextChannel):
+    def is_channel_tracked(self, channel: discord.TextChannel):
         """
         Checks if the channel is in the channel ids list.
         """
         return channel.id in self.channel_ids_list[channel.guild.id]
 
-    def _track_channel(self, channel: discord.TextChannel):
+    def track_channel(self, channel: discord.TextChannel):
         """
         Adds the channel to the channel ids list.
         """
         self.channel_ids_list[channel.guild.id].append(channel.id)
         self._save_channel_ids()
 
-    def _untrack_channel(self, channel: discord.TextChannel):
+    def untrack_channel(self, channel: discord.TextChannel):
         """
         Removes the channel from the channel ids list.
         """
