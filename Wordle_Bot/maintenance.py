@@ -9,24 +9,42 @@ class Maintenance(cmds.Cog):
         self.bot = bot
 
     @cmds.Cog.listener("on_ready")
-    async def refresh_scores(self):
-        logger.info("Refreshing scores...")
+    async def load_all_scores(self):
+        logger.info("Loading scores...")
         await self.bot.refresh_scores()
         logger.info("Scores refreshed. Bot ready.")
 
     @cmds.command(hidden=True)
-    async def refresh(self, ctx, wipe_scores=False):
+    async def refresh_global(self, ctx, wipe_scores=False):
         """
         Refreshes the scores for the current server.
         """
-        await ctx.send("Refreshing scores. This may take a few minutes...")
+        await ctx.send("Globally refreshing scores. This may take a few minutes...")
         await self.refresh_scores(wipe_scores)
+        await ctx.send("Scores refreshed.")
+
+    @refresh_global.error
+    async def refresh_global_error(self, ctx, error):
+        if isinstance(error, cmds.BadArgument):
+            await ctx.send("Argument syntax error. Usage: w!refresh [wipe_scores]")
+
+    @cmds.command(name="rf", aliases=["refresh"])
+    async def refresh(self, ctx, channel: discord.TextChannel):
+        """
+        Refreshes the scores count for a channel.
+        """
+        await ctx.send(
+            f"Refreshing score count in #{channel.name}. This may take a minutes..."
+        )
+        await self.bot.refresh_channel(channel)
         await ctx.send("Scores refreshed.")
 
     @refresh.error
     async def refresh_error(self, ctx, error):
-        if isinstance(error, cmds.BadArgument):
-            await ctx.send("Argument syntax error. Usage: w!refresh [wipe_scores]")
+        if isinstance(error, cmds.ChannelNotFound):
+            await ctx.send("Channel not found. Please use a valid channel.")
+        elif isinstance(error, cmds.BadArgument):
+            await ctx.send("Argument syntax error. Usage: w!rf [channel]")
 
     @cmds.command(name="addch", aliases=["addchannel"])
     async def addchannel(self, ctx, channel: discord.TextChannel):

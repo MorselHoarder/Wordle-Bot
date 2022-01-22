@@ -25,22 +25,33 @@ class WordleBot(Bot):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._load_channel_ids()
         self.scores = {}
         self.initialized = False
 
     async def refresh_scores(self, wipe_scores=False):
         """
-        Refreshes the scores dict.
+        Refreshes the scores dict. This is a global function, so it will refresh all scores.
         """
+        if not self.initialized:
+            self._load_channel_ids()
         if wipe_scores:
             self.scores = {}
+
         for channel in self.get_all_channels():
             if channel.id in self.channel_ids_list[channel.guild.id]:
                 async for message in channel.history(limit=None):
                     self.check_for_wordle(message)
 
-        self.initialized = True
+        if not self.initialized:
+            self.initialized = True
+
+    async def refresh_channel(self, channel: discord.TextChannel):
+        """
+        Refreshes the scores dict for the channel.
+        """
+        if channel.id in self.channel_ids_list[channel.guild.id]:
+            async for message in channel.history(limit=None):
+                self.check_for_wordle(message)
 
     def check_for_wordle(self, message: discord.Message):
         """
