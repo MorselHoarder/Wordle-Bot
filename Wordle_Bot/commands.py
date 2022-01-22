@@ -46,13 +46,6 @@ class WordleGameCommands(cmds.Cog):
             "```\n" + tabulate(table, headers=HEADERS, tablefmt="psql") + "```"
         )
 
-    @show_scores.error
-    async def show_scores_error(self, ctx, error):
-        if isinstance(error, cmds.MemberNotFound):
-            await ctx.send(
-                f"Cannot find member '{error.argument}'. Try spelling with the correct case, use their full username, or use a mention."
-            )
-
     @cmds.command(name="lb", aliases=["leaderboard"])
     async def leaderboard(self, ctx, scope=None):
         """

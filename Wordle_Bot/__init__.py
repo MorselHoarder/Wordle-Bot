@@ -2,6 +2,7 @@ import discord
 from Wordle_Bot.bot import WordleBot
 from Wordle_Bot.commands import WordleGameCommands
 from Wordle_Bot.maintenance import Maintenance
+from Wordle_Bot.errors import Errors
 
 
 def create_bot(
@@ -20,4 +21,5 @@ def create_bot(
     )
     bot.add_cog(WordleGameCommands(bot))
     bot.add_cog(Maintenance(bot))
+    bot.add_cog(Errors(bot))
     return bot

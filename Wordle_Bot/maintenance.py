@@ -23,11 +23,6 @@ class Maintenance(cmds.Cog):
         await self.refresh_scores(wipe_scores)
         await ctx.send("Scores refreshed.")
 
-    @refresh_global.error
-    async def refresh_global_error(self, ctx, error):
-        if isinstance(error, cmds.BadArgument):
-            await ctx.send("Argument syntax error. Usage: w!refresh [wipe_scores]")
-
     @cmds.command(name="rf", aliases=["refresh"])
     async def refresh(self, ctx, channel: discord.TextChannel):
         """
@@ -38,13 +33,6 @@ class Maintenance(cmds.Cog):
         )
         await self.bot.refresh_channel(channel)
         await ctx.send("Scores refreshed.")
-
-    @refresh.error
-    async def refresh_error(self, ctx, error):
-        if isinstance(error, cmds.ChannelNotFound):
-            await ctx.send("Channel not found. Please use a valid channel.")
-        elif isinstance(error, cmds.BadArgument):
-            await ctx.send("Argument syntax error. Usage: w!rf [channel]")
 
     @cmds.command(name="addch", aliases=["addchannel"])
     async def addchannel(self, ctx, channel: discord.TextChannel):
@@ -60,11 +48,6 @@ class Maintenance(cmds.Cog):
         self.bot.track_channel(channel)
         await ctx.send(f"Added channel {ctx.channel.name}.")
 
-    @addchannel.error
-    async def addchannel_error(self, ctx, error):
-        if isinstance(error, cmds.BadArgument):
-            await ctx.send("Channel not found in server.")
-
     @cmds.command(name="remch", aliases=["removech"])
     async def removechannel(self, ctx, channel: discord.TextChannel):
         """
@@ -77,11 +60,6 @@ class Maintenance(cmds.Cog):
         self.bot.untrack_channel(channel)
         await ctx.send(f"Removed channel {ctx.channel.name}.")
 
-    @removechannel.error
-    async def removechannel_error(self, ctx, error):
-        if isinstance(error, cmds.BadArgument):
-            await ctx.send("Channel not found in server.")
-
     @cmds.command(name="chl", aliases=["chlist"])
     async def channel_list(self, ctx):
         """
@@ -93,6 +71,8 @@ class Maintenance(cmds.Cog):
 
         await ctx.send(
             "```\n"
-            + "\n".join([f"#{channel.name}" for channel in self.bot.channels_tracked])
+            + "\n".join(
+                [f"#{channel.name}" for channel in self.bot.channels_tracked(ctx)]
+            )
             + "```"
         )
