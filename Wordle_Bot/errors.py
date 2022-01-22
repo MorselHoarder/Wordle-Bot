@@ -29,6 +29,9 @@ class Errors(cmds.Cog):
         elif isinstance(error, cmds.BadArgument):
             await ctx.send("Argument syntax error. Please use a valid argument.")
             return
+        elif isinstance(error, cmds.NotOwner):
+            await ctx.send("Only the bot owner can use this command.")
+            return
 
         logger.error(error)
         await ctx.send(

@@ -15,6 +15,7 @@ class Maintenance(cmds.Cog):
         logger.info("Scores refreshed. Bot ready.")
 
     @cmds.command(hidden=True)
+    @cmds.is_owner()
     async def refresh_global(self, ctx, wipe_scores=False):
         """
         Refreshes the scores for the current server.
