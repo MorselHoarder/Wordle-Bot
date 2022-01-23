@@ -8,13 +8,27 @@ from Wordle_Bot.errors import Errors
 
 def create_bot(
     command_prefix="w!",
-    description="""Hi! I'm the Wordle Bot! I help server members compete in deciding who is the hottest Wordle aficionado. 
+    description=None,
+    intents=None,
+):
+    if intents is None:
+        intents = discord.Intents.default()
+        intents.members = True
+        intents.presences = True
+        intents.guilds = True
+
+    if description is None:
+        description = """Hi! I'm the Wordle Bot! I help server members compete in deciding who is the hottest Wordle aficionado. 
     
     You may be wondering how to participate in the Wordle game. The rules are simple:
 
-    Post your wordle scores in a text channel that is tracked by the bot. Usually this is #wordle. You can check this with `w!chlist`.
+    1. Play the game here: https://www.powerlanguage.co.uk/wordle/ 
+       Then, hit the `Share` button to copy it.
 
-    Your posts should be in the format:
+    2. Post your wordle score in a text channel that is tracked by the bot. 
+       Usually this is #wordle. You can check this with `w!chlist`.
+
+    Your post should be in the format:
     ```
     Wordle ### #/6
 
@@ -37,14 +51,7 @@ def create_bot(
     - This is for FUN, not serious competition. Enjoy yourselves!
 
     See the following command categories below for more information:
-    """,
-    intents=None,
-):
-    if intents is None:
-        intents = discord.Intents.default()
-        intents.members = True
-        intents.presences = True
-        intents.guilds = True
+    """
 
     bot = WordleBot(
         command_prefix=command_prefix,

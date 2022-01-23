@@ -18,7 +18,7 @@ class GameCommands(cmds.Cog):
         if self.bot.is_channel_tracked(message.channel):
             self.bot.check_for_wordle(message)
 
-    @cmds.command(name="s", aliases=["score", "scores"])
+    @cmds.command(name="score", aliases=["s", "scores"])
     async def show_scores(self, ctx, *members: discord.Member):
         """
         Displays the score of each member passed in.

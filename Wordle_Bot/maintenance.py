@@ -29,7 +29,7 @@ class Maintenance(cmds.Cog):
     @cmds.command(name="refresh", aliases=["rf"])
     async def refresh_all_channels(self, ctx):
         """
-        Refreshes the scores for all tracked channels in the server.
+        Recounts the scores for all tracked channels in the server.
         Equivalent to calling 'w!rfch' for each channel.
         """
         await ctx.send("Refreshing scores for this server...")
@@ -39,7 +39,7 @@ class Maintenance(cmds.Cog):
     @cmds.command(name="refreshch", aliases=["rfch", "refreshchannel"])
     async def refresh_channel(self, ctx, channel: discord.TextChannel):
         """
-        Refreshes the scores count for a tracked channel.
+        Recounts scores for a specified tracked channel.
         Use this when you need to add scores from a new channel.
         """
         await ctx.send(
@@ -51,7 +51,7 @@ class Maintenance(cmds.Cog):
     @cmds.command(name="addch", aliases=["addchannel"])
     async def add_channel(self, ctx, channel: discord.TextChannel):
         """
-        Adds a text channel to the list of channels to track wordle scores in.
+        Adds a text channel to the list of channels that track wordle scores.
         This must be done before the bot can track wordle scores in the channel.
         Best practice is to have a channel just for #wordle, but multiple channels is fine.
         """
@@ -65,7 +65,7 @@ class Maintenance(cmds.Cog):
     @cmds.command(name="remch", aliases=["removech"])
     async def remove_channel(self, ctx, channel: discord.TextChannel):
         """
-        Removes a text channel from the list of channels to track wordle scores in.
+        Removes a text channel from the list of tracked channels.
         """
         if not self.bot.is_channel_tracked(channel):
             await ctx.send("Channel not in list.")
@@ -77,7 +77,7 @@ class Maintenance(cmds.Cog):
     @cmds.command(name="chlist", aliases=["chl"])
     async def channel_list(self, ctx):
         """
-        Displays the list of channels to track wordle scores in.
+        Displays the list of tracked channels.
         """
         if not self.bot.channels_tracked(ctx):
             await ctx.send("No channels are being tracked.")
@@ -96,14 +96,22 @@ class Maintenance(cmds.Cog):
         """
         Displays intructions for how to set up the bot for use in your server.
         """
-        await ctx.send(
-            "```\n"
-            + "Follow these steps to set up the bot:\n"
-            + "Step 1: 'Track' the channels that have, or will contain, Wordle scores. Use `w!addch [channel]` to add a channel.\n"
-            + "\t\tYou may want to make a #wordle channel to contain the score spam if you haven't already.\n"
-            + "Step 2: Use 'w!refresh' to refresh the bot's cache of Wordle scores.\n"
-            + "\t\tOnce the bot is finished refreshing, you're done!\n\n"
-            + "Posting a Wordle score in a tracked channel automatically adds it to the bot's cache.\n\n"
-            + "Refreshing a tracked channel accesses the channel's history and checks for Wordle scores. If the history is extensive, this operation can take a while, which is why limiting this access to tracked channels is recommended.\n"
-            + "```"
+        e = discord.Embed(
+            title="Setup Instructions",
+            color=discord.Color.gold(),
+            description="Follow these steps to set up the bot:",
         )
+        e.add_field(
+            name="1) Track channels",
+            value="> Track the channels that have, or will contain, Wordle scores. Use `w!addch [channel]` to add a channel. You may want to make a #wordle channel to contain the score spam if you haven't already.",
+            inline=False,
+        )
+        e.add_field(
+            name="2) Refresh scores",
+            value="> Use `w!refresh` to refresh the bot's cache of Wordle scores. Once the bot is finished refreshing, you're done!\n ",
+            inline=False,
+        )
+        e.set_footer(
+            text="\nPosting a Wordle score in a tracked channel automatically adds it to the bot's cache.\n\nRefreshing a tracked channel accesses the channel's history and checks for Wordle scores. If the history is extensive this operation can take a while, which is why limiting this access to a few tracked channels is recommended."
+        )
+        await ctx.send(embed=e)
