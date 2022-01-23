@@ -7,13 +7,16 @@ from Wordle_Bot.logger import logger
 HEADERS = ["Name", "Average Score", "Completed"]
 
 
-class WordleGameCommands(cmds.Cog):
+class GameCommands(cmds.Cog):
+    """See scores and leaderboards!"""
+
     def __init__(self, bot) -> None:
         self.bot = bot
 
     @cmds.Cog.listener("on_message")
     async def check_new_message(self, message: discord.Message):
-        self.bot.check_for_wordle(message)
+        if self.bot.is_channel_tracked(message.channel):
+            self.bot.check_for_wordle(message)
 
     @cmds.command(name="s", aliases=["score", "scores"])
     async def show_scores(self, ctx, *members: discord.Member):
@@ -21,8 +24,8 @@ class WordleGameCommands(cmds.Cog):
         Displays the score of each member passed in.
         If no members are passed in, the score of the current user is displayed.
         [member] can be a mention, a name, or an ID.
-        Usage examples:  w!score
-                         w!s @ServerMember12 FunnyNicknameGuy42 Bro#1234
+        Examples:  w!score
+                   w!s @ServerMember12 FunnyNicknameGuy42 Bro#1234
         """
         if not self.bot.initialized:
             await ctx.send(

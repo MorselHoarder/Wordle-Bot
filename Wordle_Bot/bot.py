@@ -45,6 +45,13 @@ class WordleBot(Bot):
         if not self.initialized:
             self.initialized = True
 
+    async def refresh_server(self, guild: discord.Guild):
+        """
+        Refreshes the scores dict for the server.
+        """
+        for channel in guild.text_channels:
+            await self.refresh_channel(channel)
+
     async def refresh_channel(self, channel: discord.TextChannel):
         """
         Refreshes the scores dict for the channel.
