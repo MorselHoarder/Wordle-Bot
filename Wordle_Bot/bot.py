@@ -134,7 +134,8 @@ class WordleBot(Bot):
         """
         try:
             with open(CHANNELS_JSON_FILE, "r") as f:
-                self.channel_ids_list = json.load(f)
+                d = json.load(f)
+                self.channel_ids_list = {int(key): value for key, value in d.items()}
         except FileNotFoundError:
             logger.info("No channel names file found.")
             self.channel_ids_list = {guild.id: [] for guild in self.guilds}
