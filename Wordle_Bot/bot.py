@@ -1,6 +1,7 @@
 import re
 import statistics as stats
 import json
+import datetime as dt
 
 import discord
 from discord.ext.commands import Bot
@@ -9,6 +10,7 @@ from Wordle_Bot.logger import logger
 
 CHANNELS_JSON_FILE = "channels.json"
 WORDLE_PATTERN = re.compile(r"\bWordle (\d+) (\d)/\d\n")
+EARLIEST_WORDLE_DATE = dt.datetime(2021, 6, 17)
 
 
 class WordleBot(Bot):
@@ -39,7 +41,9 @@ class WordleBot(Bot):
 
         for channel in self.get_all_channels():
             if channel.id in self.channel_ids_list[channel.guild.id]:
-                async for message in channel.history(limit=None):
+                async for message in channel.history(
+                    limit=None, after=EARLIEST_WORDLE_DATE
+                ):
                     self.check_for_wordle(message)
 
         if not self.initialized:
@@ -57,7 +61,9 @@ class WordleBot(Bot):
         Refreshes the scores dict for the channel.
         """
         if channel.id in self.channel_ids_list[channel.guild.id]:
-            async for message in channel.history(limit=None):
+            async for message in channel.history(
+                limit=None, after=EARLIEST_WORDLE_DATE
+            ):
                 self.check_for_wordle(message)
 
     def check_for_wordle(self, message: discord.Message):
