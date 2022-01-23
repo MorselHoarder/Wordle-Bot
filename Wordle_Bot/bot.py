@@ -36,15 +36,12 @@ class WordleBot(Bot):
         """
         if not self.initialized:
             self._load_channel_ids()
+
         if wipe_scores:
             self.scores = {}
 
-        for channel in self.get_all_channels():
-            if channel.id in self.channel_ids_list[channel.guild.id]:
-                async for message in channel.history(
-                    limit=None, after=EARLIEST_WORDLE_DATE
-                ):
-                    self.check_for_wordle(message)
+        for guild in self.guilds:
+            await self.refresh_server(guild)
 
         if not self.initialized:
             self.initialized = True
@@ -60,6 +57,8 @@ class WordleBot(Bot):
         """
         Refreshes the scores dict for the channel.
         """
+        if not self.guild_is_tracked(channel.guild):
+            self.track_guild(channel.guild)
         if channel.id in self.channel_ids_list[channel.guild.id]:
             async for message in channel.history(
                 limit=None, after=EARLIEST_WORDLE_DATE
@@ -98,6 +97,9 @@ class WordleBot(Bot):
         """
         Returns a list of tracked channel names in the current server.
         """
+        if not self.guild_is_tracked(ctx.guild):
+            return []
+
         return (
             [
                 discord.utils.get(ctx.guild.text_channels, id=channel_id)
@@ -111,12 +113,16 @@ class WordleBot(Bot):
         """
         Checks if the channel is in the channel ids list.
         """
+        if not self.guild_is_tracked(channel.guild):
+            return False
         return channel.id in self.channel_ids_list[channel.guild.id]
 
     def track_channel(self, channel: discord.TextChannel):
         """
         Adds the channel to the channel ids list.
         """
+        if not self.guild_is_tracked(channel.guild):
+            self.track_guild(channel.guild)
         self.channel_ids_list[channel.guild.id].append(channel.id)
         self._save_channel_ids()
 
@@ -124,7 +130,22 @@ class WordleBot(Bot):
         """
         Removes the channel from the channel ids list.
         """
+        if not self.guild_is_tracked(channel.guild):
+            return
         self.channel_ids_list[channel.guild.id].remove(channel.id)
+        self._save_channel_ids()
+
+    def guild_is_tracked(self, guild: discord.Guild):
+        """
+        Checks if the guild is in the channel ids list.
+        """
+        return guild.id in self.channel_ids_list
+
+    def track_guild(self, guild: discord.Guild):
+        """
+        Adds the guild to the channel ids list.
+        """
+        self.channel_ids_list[guild.id] = []
         self._save_channel_ids()
 
     def _save_channel_ids(self):
@@ -145,3 +166,9 @@ class WordleBot(Bot):
         except FileNotFoundError:
             logger.info("No channel names file found.")
             self.channel_ids_list = {guild.id: [] for guild in self.guilds}
+
+    def stop(self):
+        """
+        Stops the bot.
+        """
+        self.loop.stop()

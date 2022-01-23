@@ -38,3 +38,12 @@ class Errors(cmds.Cog):
         await ctx.send(
             "An error occurred. Please contact the bot owner if this persists."
         )
+
+    @cmds.command(hidden=True)
+    @cmds.is_owner()
+    async def stop(self, ctx):
+        """
+        Stops the event loop, killing the bot.
+        """
+        await ctx.send("Stopping event loop...")
+        self.bot.stop()

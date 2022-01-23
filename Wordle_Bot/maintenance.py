@@ -67,6 +67,10 @@ class Maintenance(cmds.Cog):
         """
         Removes a text channel from the list of tracked channels.
         """
+        if not self.bot.channels_tracked(ctx):
+            await ctx.send("No channels are being tracked.")
+            return
+
         if not self.bot.is_channel_tracked(channel):
             await ctx.send("Channel not in list.")
             return
