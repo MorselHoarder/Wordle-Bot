@@ -60,7 +60,7 @@ class Maintenance(cmds.Cog):
             return
 
         self.bot.track_channel(channel)
-        await ctx.send(f"Added channel '#{ctx.channel.name}'.")
+        await ctx.send(f"Added channel '#{channel.name}'.")
 
     @cmds.command(name="remch", aliases=["removech"])
     async def remove_channel(self, ctx, channel: discord.TextChannel):
@@ -76,7 +76,7 @@ class Maintenance(cmds.Cog):
             return
 
         self.bot.untrack_channel(channel)
-        await ctx.send(f"Removed channel '#{ctx.channel.name}'.")
+        await ctx.send(f"Removed channel '#{channel.name}'.")
 
     @cmds.command(name="chlist", aliases=["chl"])
     async def channel_list(self, ctx):
