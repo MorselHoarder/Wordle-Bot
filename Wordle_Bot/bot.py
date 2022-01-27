@@ -9,7 +9,7 @@ from discord.ext.commands import Bot
 from Wordle_Bot.logger import logger
 
 CHANNELS_JSON_FILE = "channels.json"
-WORDLE_PATTERN = re.compile(r"\bWordle (\d+) (\d)/\d\n")
+WORDLE_PATTERN = re.compile(r"\bWordle (\d+) (\d|X)/\d\n")
 EARLIEST_WORDLE_DATE = dt.datetime(2021, 6, 17)
 
 
