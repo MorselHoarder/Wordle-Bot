@@ -14,7 +14,6 @@ def create_bot(
     if intents is None:
         intents = discord.Intents.default()
         intents.members = True
-        intents.presences = True
         intents.guilds = True
 
     if description is None:
