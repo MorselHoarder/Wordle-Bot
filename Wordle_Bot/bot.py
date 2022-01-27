@@ -100,14 +100,13 @@ class WordleBot(Bot):
         if not self.guild_is_tracked(ctx.guild):
             return []
 
-        return (
-            [
-                discord.utils.get(ctx.guild.text_channels, id=channel_id)
-                for channel_id in self.channel_ids_list[ctx.guild.id]
-            ]
-            if self.channel_ids_list[ctx.guild.id]
-            else []
-        )
+        channels = []
+        for channel_id in self.channel_ids_list[ctx.guild.id]:
+            channel = discord.utils.get(ctx.guild.text_channels, id=channel_id)
+            if channel is not None:
+                channels.append(channel.name)
+
+        return channels
 
     def is_channel_tracked(self, channel: discord.TextChannel):
         """
