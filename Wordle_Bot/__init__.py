@@ -2,6 +2,7 @@ import discord
 from pretty_help import PrettyHelp, DefaultMenu
 from Wordle_Bot.bot import WordleBot
 from Wordle_Bot.commands import GameCommands
+from Wordle_Bot.listeners import Listeners
 from Wordle_Bot.maintenance import Maintenance
 from Wordle_Bot.errors import Errors
 
@@ -65,5 +66,6 @@ def create_bot(
     )
     bot.add_cog(GameCommands(bot))
     bot.add_cog(Maintenance(bot))
+    bot.add_cog(Listeners(bot))
     bot.add_cog(Errors(bot))
     return bot

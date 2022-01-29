@@ -77,6 +77,19 @@ class WordleBot(Bot):
                 self.scores[message.author.id] = {}
             self.scores[message.author.id][day] = score
 
+    def check_for_wordle_removed(self, message: discord.Message):
+        """
+        Checks if the message is a wordle. If so, attempts to remove the score from the scores dict.
+        """
+        m = WORDLE_PATTERN.search(message.content)
+        if m:
+            day = int(m.group(1))
+            if (
+                message.author.id in self.scores
+                and day in self.scores[message.author.id]
+            ):
+                del self.scores[message.author.id][day]
+
     def get_average_wordle_score(self, member: discord.Member):
         """
         Returns the average wordle score of the member.
@@ -145,6 +158,14 @@ class WordleBot(Bot):
         Adds the guild to the channel ids list.
         """
         self.channel_ids_list[guild.id] = []
+        self._save_channel_ids()
+
+    def untrack_guild(self, guild: discord.Guild):
+        """
+        Removes the guild from the channel ids list.
+        """
+        if self.guild_is_tracked(guild):
+            del self.channel_ids_list[guild.id]
         self._save_channel_ids()
 
     def _save_channel_ids(self):

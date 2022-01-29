@@ -10,12 +10,6 @@ class Maintenance(cmds.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
 
-    @cmds.Cog.listener("on_ready")
-    async def load_all_scores(self):
-        logger.info("Loading scores...")
-        await self.bot.refresh_scores()
-        logger.info("Scores refreshed. Bot ready.")
-
     @cmds.command(name="refreshglobal", hidden=True)
     @cmds.is_owner()
     async def refresh_global(self, ctx, wipe_scores=False):

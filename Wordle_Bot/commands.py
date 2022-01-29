@@ -13,11 +13,6 @@ class GameCommands(cmds.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
 
-    @cmds.Cog.listener("on_message")
-    async def check_new_message(self, message: discord.Message):
-        if self.bot.is_channel_tracked(message.channel):
-            self.bot.check_for_wordle(message)
-
     @cmds.command(name="score", aliases=["s", "scores"])
     async def show_scores(self, ctx, *members: discord.Member):
         """
