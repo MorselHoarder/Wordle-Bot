@@ -27,6 +27,46 @@ class Errors(cmds.Cog):
                 f"Channel '{error.argument}' not found. Please use a valid channel."
             )
             return
+        elif isinstance(error, cmds.ChannelNotReadable):
+            await ctx.send(
+                f"Channel '{error.argument}' is not readable. Please make sure that I have channel access."
+            )
+            return
+        elif isinstance(error, cmds.MissingPermissions):
+            await ctx.send(
+                "You do not have permission to use this command. Please contact a server administrator."
+            )
+            return
+        elif isinstance(error, cmds.BotMissingPermissions):
+            await ctx.send(
+                f"I do not have permission to use this command. I require the following permissions: {error.missing_perms}."
+            )
+            return
+        elif isinstance(error, cmds.RoleNotFound):
+            await ctx.send(
+                f"Role '{error.argument}' not found. Please use a valid role."
+            )
+            return
+        elif isinstance(error, cmds.MissingRole):
+            await ctx.send(
+                "You do not have the required role to use this command. Please contact a server administrator."
+            )
+            return
+        elif isinstance(error, cmds.BotMissingRole):
+            await ctx.send(
+                f"I do not have the required role to use this command. I require the following role: {error.missing_role}."
+            )
+            return
+        elif isinstance(error, cmds.MissingAnyRole):
+            await ctx.send(
+                "You do not have the required role(s) to use this command. Please contact a server administrator."
+            )
+            return
+        elif isinstance(error, cmds.BotMissingAnyRole):
+            await ctx.send(
+                f"I do not have the required role(s) to use this command. I require the following role(s): {error.missing_role}."
+            )
+            return
         elif isinstance(error, cmds.BadArgument):
             await ctx.send("Argument syntax error. Please use a valid argument.")
             return
