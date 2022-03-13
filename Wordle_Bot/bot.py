@@ -1,7 +1,10 @@
+import os
 import re
 import statistics as stats
 import json
 import datetime as dt
+
+import asyncpg
 
 import discord
 from discord.ext.commands import Bot
@@ -17,6 +20,29 @@ class WordleBot(Bot):
     """
     The Wordle Bot.
 
+    Connects to a PostgreSQL database with the following structure:
+
+    CREATE TABLE guilds (
+        guild_id numeric PRIMARY KEY,
+        channel_ids numeric[]
+    )
+
+    CREATE TABLE $(channel_id) (
+        user_id numeric PRIMARY KEY,
+        ???
+    )
+    This table stores each guild's tracked channel ids.
+    Server admins determine what channels are tracked.
+
+    For each tracked channel, the bot will create a table:
+    # TODO add member_IDs somewhere
+    CREATE TABLE $(channel_id) (
+        day integer PRIMARY KEY,
+        score smallint,
+        DNF boolean,
+        message_id numeric,
+    )
+
     Scores structure: Dict of Dicts
     {
         Member_ID: {
@@ -29,6 +55,24 @@ class WordleBot(Bot):
         super().__init__(*args, **kwargs)
         self.scores = {}
         self.initialized = False
+
+    async def init_db(self):
+        """
+        Initializes a connection pool for the PostgreSQL database.
+        """
+        self.db = await asyncpg.create_pool(
+            host=os.environ["PG_HOSTNAME"],
+            user=os.environ["PG_USERNAME"],
+            password=os.environ["PG_PASSWORD"],
+            database=os.environ["PG_DATABASE"],
+        )
+
+    async def start(self, *args, **kwargs):
+        """
+        Reimplement the start method to run the init_db method.
+        """
+        await self.init_db()
+        await super().start(*args, **kwargs)
 
     async def refresh_scores(self, wipe_scores=False):
         """
@@ -69,8 +113,7 @@ class WordleBot(Bot):
         """
         Checks if the message is a Wordle. If so, adds the scores to the score dict.
         """
-        m = WORDLE_PATTERN.search(message.content)
-        if m:
+        if m := WORDLE_PATTERN.search(message.content):
             day = int(m.group(1))
             score = int(m.group(2)) if m.group(2) != "X" else 7
             if message.author.id not in self.scores:
@@ -81,8 +124,7 @@ class WordleBot(Bot):
         """
         Checks if the message is a wordle. If so, attempts to remove the score from the scores dict.
         """
-        m = WORDLE_PATTERN.search(message.content)
-        if m:
+        if m := WORDLE_PATTERN.search(message.content):
             day = int(m.group(1))
             if (
                 message.author.id in self.scores
